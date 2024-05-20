@@ -1,16 +1,15 @@
-import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from xgboost import XGBClassifier
+#flask
+from flask import Flask, render_template, request, redirect, url_for, session
 
-# NOTE: Make sure that the outcome column is labeled 'target' in the data file
-tpot_data = pd.read_csv('PATH/TO/DATA/FILE', sep='COLUMN_SEPARATOR', dtype=np.float64)
-features = tpot_data.drop('target', axis=1)
-training_features, testing_features, training_target, testing_target = \
-            train_test_split(features, tpot_data['target'], random_state=None)
+#modules
+from modules.config import app, db
+from modules.model import prediction
 
-# Average CV score on the training set was: 0.9843293686746876
-exported_pipeline = XGBClassifier(learning_rate=0.1, max_depth=10, min_child_weight=1, n_estimators=100, n_jobs=1, subsample=0.4, verbosity=0)
+#excepciones
+from sqlalchemy.orm.exc import NoResultFound 
 
-exported_pipeline.fit(training_features, training_target)
-results = exported_pipeline.predict(testing_features)
+with app.app_context():
+    db.create_all()
+    
+@app.route("/", methods=['GET', 'POST'])
+def raiz():  

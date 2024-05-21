@@ -13,3 +13,4 @@ with app.app_context():
     
 @app.route("/", methods=['GET', 'POST'])
 def raiz():  
+    return render_template("main.html")
